@@ -1,5 +1,3 @@
-# src/api/models.py
-
 import os
 
 from sqlalchemy.sql import func

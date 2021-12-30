@@ -1,6 +1,3 @@
-# src/api/__init__.py
-
-
 from flask_restx import Api
 
 from src.api.ping import ping_namespace
