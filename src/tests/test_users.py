@@ -1,6 +1,3 @@
-# src/tests/test_users.py
-
-
 import json
 
 import pytest

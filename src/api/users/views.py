@@ -1,6 +1,3 @@
-# src/api/users/views.py
-
-
 from flask import request
 from flask_restx import Namespace, Resource, fields
 

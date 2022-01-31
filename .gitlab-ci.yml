@@ -37,10 +37,10 @@ test:
     DATABASE_TEST_URL: postgresql://runner:runner@postgres:5432/users
     FLASK_ENV: development
   script:
-    - python3.9 -m venv env
+    - python3.10 -m venv env
     - source env/bin/activate
     - pip install -r requirements.txt
-    - pip install black==21.5b1 flake8===3.9.2 isort==5.8.0 pytest==6.2.4
+    - pip install black==21.12b0 flake8==4.0.1 isort==5.10.1 pytest==6.2.5
     - pytest "src/tests" -p no:warnings
     - flake8 src
     - black src --check
@@ -52,7 +52,7 @@ deploy:
     - docker:dind
   variables:
     DOCKER_DRIVER: overlay2
-    HEROKU_APP_NAME: sleepy-plateau-70373
+    HEROKU_APP_NAME: polar-coast-19525
     HEROKU_REGISTRY_IMAGE: registry.heroku.com/${HEROKU_APP_NAME}/web
   script:
     - apk add --no-cache curl
