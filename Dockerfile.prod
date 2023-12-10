@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.11.2-slim-buster as builder
+FROM python:3.12.0-slim-bookworm as builder
 
 # set working directory
 WORKDIR /usr/src/app
@@ -24,7 +24,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 
 # lint
 COPY . .
-RUN pip install black==23.1.0 flake8==6.0.0 isort==5.12.0
+RUN pip install black==23.11.0 flake8==6.1.0 isort==5.12.0
 RUN flake8 src
 RUN black src --check
 RUN isort src --check-only
@@ -35,7 +35,7 @@ RUN isort src --check-only
 #########
 
 # pull official base image
-FROM python:3.11.2-slim-buster
+FROM python:3.12.0-slim-bookworm
 
 # set work directory
 WORKDIR /usr/src/app
