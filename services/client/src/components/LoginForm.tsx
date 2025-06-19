@@ -18,7 +18,8 @@ const validationSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-// type FormValues = z.infer<typeof validationSchema>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type FormValues = z.infer<typeof validationSchema>;
 
 interface LoginFormProps {
   onSubmit: (values: { email: string; password: string }) => void;
