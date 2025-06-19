@@ -1,24 +1,29 @@
-import { render, screen, cleanup } from "../test-utils";
-import { describe, it, expect, vi, afterEach } from "vitest";
+import React from "react";
+import { render, screen } from "../test-utils";
+import { describe, it, expect, vi } from "vitest";
+import { BrowserRouter as Router } from "react-router-dom";
 import RegisterForm from "../../components/RegisterForm";
+import { expect as expectVitest } from "vitest";
+
+const mockProps = {
+  onSubmit: vi.fn(),
+  isAuthenticated: vi.fn().mockReturnValue(false),
+};
+
+const renderWithRouter = (ui: React.ReactElement, { route = "/" } = {}) => {
+  window.history.pushState({}, "Test page", route);
+  return render(ui, { wrapper: Router });
+};
 
 describe("RegisterForm", () => {
-  afterEach(() => {
-    cleanup();
-  });
-  const mockOnSubmit = vi.fn();
-  const props = {
-    onSubmit: mockOnSubmit,
-  };
-
   it("renders properly", () => {
-    render(<RegisterForm {...props} />);
+    renderWithRouter(<RegisterForm {...mockProps} />);
     const heading = screen.getByRole("heading", { name: "Register" });
     expect(heading.tagName.toLowerCase()).toBe("h1");
   });
 
   it("renders with default props", () => {
-    render(<RegisterForm {...props} />);
+    renderWithRouter(<RegisterForm {...mockProps} />);
 
     const usernameInput = screen.getByLabelText("Username") as HTMLInputElement;
     expect(usernameInput.value).toBe("");
@@ -36,7 +41,22 @@ describe("RegisterForm", () => {
   });
 
   it("renders", () => {
-    const { asFragment } = render(<RegisterForm {...props} />);
+    const { asFragment } = renderWithRouter(<RegisterForm {...mockProps} />);
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("renders register form when not authenticated", () => {
+    const { container } = renderWithRouter(<RegisterForm {...mockProps} />);
+    const heading = container.querySelector("h1");
+    expectVitest(heading?.textContent).toBe("Register");
+  });
+
+  it("redirects when authenticated", () => {
+    const authenticatedProps = {
+      ...mockProps,
+      isAuthenticated: vi.fn().mockReturnValue(true),
+    };
+    renderWithRouter(<RegisterForm {...authenticatedProps} />);
+    expect(window.location.pathname).toBe("/");
   });
 });

@@ -27,7 +27,7 @@ describe("AddUser", () => {
 
   it("renders", () => {
     const { asFragment } = render(
-      <AddUser addUserToList={mockAddUserToList} />
+      <AddUser addUserToList={mockAddUserToList} />,
     );
     expect(asFragment()).toMatchSnapshot();
   });

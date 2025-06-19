@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import { z } from "zod";
 import {
@@ -17,13 +18,17 @@ const validationSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-type FormValues = z.infer<typeof validationSchema>;
+// type FormValues = z.infer<typeof validationSchema>;
 
 interface LoginFormProps {
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: { email: string; password: string }) => void;
+  isAuthenticated: () => boolean;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isAuthenticated }) => {
+  if (isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
   return (
     <Box maxWidth="400px" margin="100px auto 0">
       <Heading as="h1" size="xl" textAlign="center" mb={6}>

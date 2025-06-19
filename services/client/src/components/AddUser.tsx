@@ -37,7 +37,7 @@ const validationSchema = z.object({
     .min(4, "Username must be at least 4 characters long")
     .regex(
       /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores"
+      "Username can only contain letters, numbers, and underscores",
     ),
   email: z.string().email("Enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
@@ -51,12 +51,15 @@ const AddUser: React.FC<AddUserProps> = ({ addUserToList }) => {
     {
       setSubmitting,
       resetForm,
-    }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
+    }: {
+      setSubmitting: (isSubmitting: boolean) => void;
+      resetForm: () => void;
+    },
   ) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_SERVICE_URL}/users`,
-        values
+        values,
       );
 
       if (response.status === 201) {

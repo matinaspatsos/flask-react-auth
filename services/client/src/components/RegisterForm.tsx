@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import { z } from "zod";
 import {
@@ -18,7 +19,7 @@ const validationSchema = z.object({
     .min(6, "Username must be at least 6 characters long")
     .regex(
       /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores"
+      "Username can only contain letters, numbers, and underscores",
     ),
   email: z
     .string()
@@ -27,7 +28,7 @@ const validationSchema = z.object({
   password: z.string().min(11, "Password must be at least 11 characters long"),
 });
 
-type FormValues = z.infer<typeof validationSchema>;
+// type FormValues = z.infer<typeof validationSchema>;
 
 interface RegisterFormProps {
   onSubmit: (values: {
@@ -35,9 +36,17 @@ interface RegisterFormProps {
     email: string;
     password: string;
   }) => Promise<void>;
+  isAuthenticated: () => boolean;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({
+  onSubmit,
+  isAuthenticated,
+}) => {
+  if (isAuthenticated()) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <Box maxWidth="400px" marginTop={10} margin="100px auto 0">
       <Heading as="h1" size="xl" textAlign="center" mb={6}>
