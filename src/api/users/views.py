@@ -63,6 +63,26 @@ class Users(Resource):
         return user, 200
 
     @users_namespace.expect(user, validate=True)
+    @users_namespace.response(201, "<user_email> was added!")
+    @users_namespace.response(400, "Sorry. That email already exists.")
+    def post(self):
+        """Creates a new user."""
+        post_data = request.get_json()
+        username = post_data.get("username")
+        email = post_data.get("email")
+        response_object = {}
+
+        user = get_user_by_email(email)
+        if user:
+            response_object["message"] = "Sorry. That email already exists."
+            return response_object, 400
+
+        add_user(username, email)
+
+        response_object["message"] = f"{email} was added!"
+        return response_object, 201
+
+    @users_namespace.expect(user, validate=True)
     @users_namespace.response(200, "<user_id> was updated!")
     @users_namespace.response(400, "Sorry. That email already exists.")
     @users_namespace.response(404, "User <user_id> does not exist")

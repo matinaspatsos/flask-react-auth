@@ -29,3 +29,21 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+  client:
+    stdin_open: true
+    build:
+      context: ./services/client
+      dockerfile: Dockerfile
+    volumes:
+      - './services/client:/usr/src/app'
+      # Using anonymous volumes so that node_modules isn't overwritten when the container mounts
+      # See https://web.archive.org/web/20200612000749if_/https://success.docker.com/article/different-types-of-volumes
+      - '/usr/src/app/node_modules'
+    ports:
+      - 3007:5173
+    environment:
+      - NODE_ENV=development
+      - VITE_API_SERVICE_URL=${VITE_API_SERVICE_URL}
+    depends_on:
+      - api
