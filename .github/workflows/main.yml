@@ -20,9 +20,9 @@ jobs:
           python -m flake8 src
           python -m isort src --check-only
       # TODO: fix this. It is failing because you don't have a database
-      # - name: Test
-      #   run: |
-      #     python -m pytest "src/tests" -p no:warnings
+      - name: Test
+        run: |
+          python -m pytest "src/tests" -p no:warnings
       - name: Format
         run: |
           python -m black src --check
@@ -43,7 +43,7 @@ jobs:
           npm ci
       - name: Lint
         run: |
-          npm run prettier:check
+          npm run lint
       - name: Test
         run: |
           npm run test

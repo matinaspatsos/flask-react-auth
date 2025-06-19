@@ -22,7 +22,7 @@ const App = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_SERVICE_URL}/users`
+          `${import.meta.env.VITE_API_SERVICE_URL}/users`,
         );
         if (response.status === 200) {
           setUsers(response.data);

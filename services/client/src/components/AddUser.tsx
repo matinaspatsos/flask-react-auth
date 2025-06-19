@@ -39,7 +39,7 @@ const AddUser: React.FC<AddUserProps> = ({ addUserToList }) => {
   });
 
   const [errors, setErrors] = useState<{ username?: string; email?: string }>(
-    {}
+    {},
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +73,7 @@ const AddUser: React.FC<AddUserProps> = ({ addUserToList }) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_SERVICE_URL}/users`,
-        userData
+        userData,
       );
 
       if (response.status === 201) {
