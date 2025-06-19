@@ -71,10 +71,22 @@ const NavLinks: React.FC<{
     <Link as={RouterLink} to="/about" mr={4} color="white">
       About
     </Link>
-    <Link as={RouterLink} to="/status" mr={4} color="white">
-      User Status
-    </Link>
-    {!isAuthenticated() ? (
+    {isAuthenticated() ? (
+      <>
+        <Link as={RouterLink} to="/status" mr={4} color="white">
+          User Status
+        </Link>
+        <Link
+          as="span"
+          onClick={logoutUser}
+          mr={4}
+          color="white"
+          cursor="pointer"
+        >
+          Log Out
+        </Link>
+      </>
+    ) : (
       <>
         <Link as={RouterLink} to="/register" mr={4} color="white">
           Register
@@ -83,16 +95,6 @@ const NavLinks: React.FC<{
           Log In
         </Link>
       </>
-    ) : (
-      <Link
-        as="span"
-        onClick={logoutUser}
-        mr={4}
-        color="white"
-        cursor="pointer"
-      >
-        Log Out
-      </Link>
     )}
   </>
 );

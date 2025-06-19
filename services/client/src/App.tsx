@@ -10,6 +10,7 @@ import AddUser from "./components/AddUser";
 import About from "./components/About";
 import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/LoginForm";
+import UserStatus from "./components/UserStatus";
 
 export interface User {
   created_date: string;
@@ -130,6 +131,15 @@ const App = () => {
               <AddUser addUserToList={addUserToList} />
               <Users users={users} />
             </>
+          }
+        />
+        <Route
+          path="/status"
+          element={
+            <UserStatus
+              accessToken={accessToken || ""}
+              isAuthenticated={isAuthenticated}
+            />
           }
         />
         <Route path="/about" element={<About />} />
