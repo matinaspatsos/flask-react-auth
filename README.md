@@ -40,6 +40,9 @@ docker exec -it API_CONTAINER_ID isort src --check-only
 docker compose down -v
 ```
 
+Swagger: http://localhost:5004/doc
+DB Admin Panel: http://localhost:5004/admin/user/
+
 ### File Structure
 
 This is the file structure of the app:
