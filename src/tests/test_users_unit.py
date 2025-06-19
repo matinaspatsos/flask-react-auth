@@ -4,13 +4,15 @@ from datetime import datetime
 import pytest
 
 import src.api.users.views
+from src import bcrypt
+from src.api.users.crud import get_user_by_id
 
 
 def test_add_user(test_app, monkeypatch):
     def mock_get_user_by_email(email):
         return None
 
-    def mock_add_user(username, email):
+    def mock_add_user(username, email, password):
         return True
 
     monkeypatch.setattr(
@@ -21,7 +23,13 @@ def test_add_user(test_app, monkeypatch):
     client = test_app.test_client()
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "michael", "email": "michael@testdriven.io"}),
+        data=json.dumps(
+            {
+                "username": "michael",
+                "email": "michael@testdriven.io",
+                "password": "greaterthaneight",
+            }
+        ),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -57,7 +65,7 @@ def test_add_user_duplicate_email(test_app, monkeypatch):
     def mock_get_user_by_email(email):
         return True
 
-    def mock_add_user(username, email):
+    def mock_add_user(username, email, password):
         return True
 
     monkeypatch.setattr(
@@ -67,7 +75,13 @@ def test_add_user_duplicate_email(test_app, monkeypatch):
     client = test_app.test_client()
     resp = client.post(
         "/users",
-        data=json.dumps({"username": "michael", "email": "michael@testdriven.io"}),
+        data=json.dumps(
+            {
+                "username": "michael",
+                "email": "michael@testdriven.io",
+                "password": "greaterthaneight",
+            }
+        ),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -91,6 +105,7 @@ def test_single_user(test_app, monkeypatch):
     assert resp.status_code == 200
     assert "jeffrey" in data["username"]
     assert "jeffrey@testdriven.io" in data["email"]
+    assert "password" not in data
 
 
 def test_single_user_incorrect_id(test_app, monkeypatch):
@@ -132,6 +147,8 @@ def test_all_users(test_app, monkeypatch):
     assert "michael@mherman.org" in data[0]["email"]
     assert "fletcher" in data[1]["username"]
     assert "fletcher@notreal.com" in data[1]["email"]
+    assert "password" not in data[0]
+    assert "password" not in data[1]
 
 
 def test_remove_user(test_app, monkeypatch):
@@ -275,3 +292,25 @@ def test_update_user_duplicate_email(test_app, monkeypatch):
     data = json.loads(resp.data.decode())
     assert resp.status_code == 400
     assert "Sorry. That email already exists." in data["message"]
+
+
+def test_update_user_with_password(test_app, test_database, add_user):
+    password_one = "greaterthaneight"
+    password_two = "somethingdifferent"
+
+    user = add_user("user-to-be-updated", "update-me@testdriven.io", password_one)
+    assert bcrypt.check_password_hash(user.password, password_one)
+
+    client = test_app.test_client()
+    resp = client.put(
+        f"/users/{user.id}",
+        data=json.dumps(
+            {"username": "me", "email": "foo@testdriven.io", "password": password_two}
+        ),
+        content_type="application/json",
+    )
+    assert resp.status_code == 200
+
+    user = get_user_by_id(user.id)
+    assert bcrypt.check_password_hash(user.password, password_one)
+    assert not bcrypt.check_password_hash(user.password, password_two)
