@@ -1,20 +1,42 @@
-import { render, screen } from "../test-utils";
-import { it, expect } from "vitest";
-import "@testing-library/jest-dom/vitest";
+import { render, screen, cleanup } from "../test-utils";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import RegisterForm from "../../components/RegisterForm";
 
-it("RegisterForm renders without crashing", () => {
-  render(<RegisterForm onSubmit={() => {}} />);
+describe("RegisterForm", () => {
+  afterEach(() => {
+    cleanup();
+  });
+  const mockOnSubmit = vi.fn();
+  const props = {
+    onSubmit: mockOnSubmit,
+  };
 
-  expect(screen.getByRole("heading", { name: "Register" })).toBeInTheDocument();
-  expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: /register/i })).toBeInTheDocument();
-});
+  it("renders properly", () => {
+    render(<RegisterForm {...props} />);
+    const heading = screen.getByRole("heading", { name: "Register" });
+    expect(heading.tagName.toLowerCase()).toBe("h1");
+  });
 
-// RegisterForm.test.tsx
-it("RegisterForm renders properly", () => {
-  const { asFragment } = render(<RegisterForm onSubmit={() => {}} />);
-  expect(asFragment()).toMatchSnapshot();
+  it("renders with default props", () => {
+    render(<RegisterForm {...props} />);
+
+    const usernameInput = screen.getByLabelText("Username") as HTMLInputElement;
+    expect(usernameInput.value).toBe("");
+
+    const emailInput = screen.getByLabelText("Email") as HTMLInputElement;
+    expect(emailInput.type).toBe("email");
+    expect(emailInput.value).toBe("");
+
+    const passwordInput = screen.getByLabelText("Password") as HTMLInputElement;
+    expect(passwordInput.type).toBe("password");
+    expect(passwordInput.value).toBe("");
+
+    const submitButtons = screen.getAllByRole("button", { name: "Register" });
+    expect(submitButtons[0].textContent).toBe("Register");
+  });
+
+  it("renders", () => {
+    const { asFragment } = render(<RegisterForm {...props} />);
+    expect(asFragment()).toMatchSnapshot();
+  });
 });

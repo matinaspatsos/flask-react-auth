@@ -1,19 +1,36 @@
 import { render, screen } from "../test-utils";
-import { it, expect } from "vitest";
-import "@testing-library/jest-dom/vitest";
+import { describe, it, expect, vi } from "vitest";
 import LoginForm from "../../components/LoginForm";
 
-it("LoginForm renders without crashing", () => {
-  render(<LoginForm onSubmit={() => {}} />);
+describe("LoginForm", () => {
+  const mockOnSubmit = vi.fn();
+  const props = {
+    onSubmit: mockOnSubmit,
+  };
 
-  expect(screen.getByRole("heading", { name: /log in/i })).toBeInTheDocument();
-  expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: /log in/i })).toBeInTheDocument();
-});
+  it("renders properly", () => {
+    render(<LoginForm {...props} />);
+    const heading = screen.getByRole("heading", { name: "Log In" });
+    expect(heading.tagName.toLowerCase()).toBe("h1");
+  });
 
-// LoginForm.test.tsx
-it("LoginForm renders properly", () => {
-  const { asFragment } = render(<LoginForm onSubmit={() => {}} />);
-  expect(asFragment()).toMatchSnapshot();
+  it("renders with default props", () => {
+    render(<LoginForm {...props} />);
+
+    const emailInput = screen.getByLabelText("Email") as HTMLInputElement;
+    expect(emailInput.type).toBe("email");
+    expect(emailInput.value).toBe("");
+
+    const passwordInput = screen.getByLabelText("Password") as HTMLInputElement;
+    expect(passwordInput.type).toBe("password");
+    expect(passwordInput.value).toBe("");
+
+    const submitButtons = screen.getAllByRole("button", { name: "Log In" });
+    expect(submitButtons[0].textContent).toBe("Log In");
+  });
+
+  it("renders", () => {
+    const { asFragment } = render(<LoginForm {...props} />);
+    expect(asFragment()).toMatchSnapshot();
+  });
 });
