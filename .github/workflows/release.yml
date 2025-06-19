@@ -1,0 +1,50 @@
+# This is a reusable workflow to test code in other workflows.
+# On reusable workflows, see https://docs.github.com/en/actions/using-workflows/reusing-workflows#creating-a-reusable-workflow
+# On using Poetry, see https://github.com/marketplace/actions/python-poetry-action
+
+name: Release
+
+on: workflow_dispatch
+
+jobs:
+  test-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.0"
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements-dev.txt
+      - name: Lint
+        run: |
+          python -m flake8 src
+          python -m isort src --check-only
+      - name: Test
+        run: |
+          python -m pytest "src/tests" -p no:warnings
+      - name: Format
+        run: |
+          python -m black src --check
+  test-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.17.0"
+      - name: Install Dependencies
+        run: |
+          npm ci
+      - name: Lint
+        run: |
+          npm run prettier:check
+      - name: Test
+        run: |
+          npm run test
+      - name: Format
+        run: |
+          npm run prettier:check
